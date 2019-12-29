@@ -29,6 +29,7 @@ clickevents_topic = app.topic("com.udacity.streams.clickevents", value_type=Clic
 #
 # sanitized_topic = app.topic()
 
+
 @app.agent(clickevents_topic)
 async def clickevent(clickevents):
     async for clickevent in clickevents:
@@ -42,6 +43,7 @@ async def clickevent(clickevents):
         #       Make sure to set a key and value
         #
         #await sanitized_topic.send(...)
+        pass
 
 if __name__ == "__main__":
     app.main()
