@@ -9,8 +9,8 @@ from confluent_kafka.avro import AvroProducer
 
 logger = logging.getLogger(__name__)
 
-BROKER_URL = "PLAINTEXT://kafka0:9092"
-SCHEMA_REGISTRY_URL = "http://schema-registry:8081/"
+BROKER_URL = "PLAINTEXT://localhost:9092"
+SCHEMA_REGISTRY_URL = "http://localhost:8081"
 
 
 class Producer:
@@ -77,16 +77,12 @@ class Producer:
             return
 
         logger.info(f"Creating topic: {self.topic_name}")
+        topic = NewTopic(self.topic_name,
+                         num_partitions=self.num_partitions,
+                         replication_factor=self.num_replicas,
+                         )
 
-        futures = client.create_topics(
-            [
-                NewTopic(
-                    topic=self.topic_name,
-                    num_partitions=self.num_partitions,
-                    replication_factor=self.num_replicas,
-                )
-            ]
-        )
+        futures = client.create_topics([topic])
         for topic, future in futures.items():
             try:
                 future.result()
