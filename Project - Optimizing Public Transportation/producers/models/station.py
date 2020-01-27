@@ -44,7 +44,8 @@ class Station(Producer):
         #       partitions, and number of replicas
         #
 
-        topic_name = f"{station_name}"  # TODO: Come up with a better topic name
+        # TODO: Come up with a better topic name
+        topic_name = f"org.chicago.cta.station.arrivals.v1"
 
         # TODO: Include/fill the following in the call to super.__init__():
         #       value_schema=Station.value_schema,
