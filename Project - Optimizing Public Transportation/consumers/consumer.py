@@ -10,6 +10,9 @@ from tornado import gen
 
 logger = logging.getLogger(__name__)
 
+BROKER_URL = "PLAINTEXT://localhost:9092"
+SCHEMA_REGISTRY_URL = "http://localhost:8081"
+
 
 class KafkaConsumer:
     """Defines the base kafka consumer class"""
@@ -30,48 +33,46 @@ class KafkaConsumer:
         self.consume_timeout = consume_timeout
         self.offset_earliest = offset_earliest
 
+
         #
+        # TODO: Configure the broker properties below. Make sure to reference
+        #       the project README and use the Host URL for Kafka and
+        #       Schema Registry!
         #
-        # TODO: Configure the broker properties below. Make sure to reference the project README
-        # and use the Host URL for Kafka and Schema Registry!
-        #
-        #
+
         self.broker_properties = {
-                #
-                # TODO
-                #
+            "bootstrap.servers": BROKER_URL,
+            "group.id": "kafka_consumer",
+            "auto.offset.reset": "earliest",
         }
 
         # TODO: Create the Consumer, using the appropriate type.
         if is_avro is True:
-            self.broker_properties["schema.registry.url"] = "http://localhost:8081"
-            #self.consumer = AvroConsumer(...)
+            self.broker_properties["schema.registry.url"] = SCHEMA_REGISTRY_URL
+            self.consumer = AvroConsumer(**self.broker_properties)
         else:
-            #self.consumer = Consumer(...)
-            pass
+            self.consumer = Consumer(**self.broker_properties)
 
         #
+        # TODO: Configure the AvroConsumer and subscribe to the topics. Make
+        #       sure to think about how the `on_assign` callback should be
+        #       invoked.
         #
-        # TODO: Configure the AvroConsumer and subscribe to the topics. Make sure to think about
-        # how the `on_assign` callback should be invoked.
-        #
-        #
-        # self.consumer.subscribe( TODO )
+
+        self.consumer.subscribe(self.topic_name_pattern,
+                                on_assign=self.on_assign,
+                                )
 
     def on_assign(self, consumer, partitions):
         """Callback for when topic assignment takes place"""
-        # TODO: If the topic is configured to use `offset_earliest` set the partition offset to
-        # the beginning or earliest
-        logger.info("on_assign is incomplete - skipping")
-        for partition in partitions:
-            pass
-            #
-            #
-            # TODO
-            #
-            #
 
-        logger.info("partitions assigned for %s", self.topic_name_pattern)
+        # TODO: If the topic is configured to use `offset_earliest` set the
+        #       partition offset to the beginning or earliest
+
+        for partition in partitions:
+            consumer.seek(partition)
+
+        logger.info(f"partitions assigned for {self.topic_name_pattern}")
         consumer.assign(partitions)
 
     async def consume(self):
@@ -83,22 +84,48 @@ class KafkaConsumer:
             await gen.sleep(self.sleep_secs)
 
     def _consume(self):
-        """Polls for a message. Returns 1 if a message was received, 0 otherwise"""
-        #
-        #
-        # TODO: Poll Kafka for messages. Make sure to handle any errors or exceptions.
-        # Additionally, make sure you return 1 when a message is processed, and 0 when no message
-        # is retrieved.
-        #
-        #
-        logger.info("_consume is incomplete - skipping")
-        return 0
+        """
+        Polls for a message. Returns 1 if a message was received, 0 otherwise
+        """
 
+        #
+        # TODO: Poll Kafka for messages. Make sure to handle any errors or
+        #       exceptions. Additionally, make sure you return 1 when a message
+        #       is processed, and 0 when no message is retrieved.
+        #
+        try:
+            message = self.consumer.poll(timeout=self.consume_timeout)
+        except SerializerError as e:
+            msg = f"Failed to deserialize message: {e}"
+            logger.error(msg)
+            print(msg)
+            return 0
+
+        if not message:
+            msg = "No messages received yet."
+            print(msg)
+            logger.info(msg)
+            return 0
+
+        elif message.error() is not None:
+            msg = f"Error encountered: {message.error()}"
+            print(msg)
+            logger.error(msg)
+            return 0
+
+        else:
+            msg = f"Message consumed: {message}"
+            print(msg)
+            logger.info(msg)
+
+        logger.debug(f"message received {message.key()}, {message.value()}")
+        self.message_handler(message)
 
     def close(self):
         """Cleans up any open kafka consumers"""
-        #
+
         #
         # TODO: Cleanup the kafka consumer
         #
-        #
+        logger.debug("closing consumer...")
+        self.consumer.close()
