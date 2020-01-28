@@ -59,7 +59,7 @@ class KafkaConsumer:
         #       invoked.
         #
 
-        self.consumer.subscribe(self.topic_name_pattern,
+        self.consumer.subscribe([self.topic_name_pattern],
                                 on_assign=self.on_assign,
                                 )
 
@@ -70,7 +70,14 @@ class KafkaConsumer:
         #       partition offset to the beginning or earliest
 
         for partition in partitions:
-            consumer.seek(partition)
+            if self.offset_earliest is True:
+                logger.debug(
+                    "setting partitions to earliest for %s",
+                    self.topic_name_pattern
+                )
+                logger.debug(f"before: {partition}")
+                partition.offset = confluent_kafka.OFFSET_BEGINNING
+                logger.debug(f"after: {partition}")
 
         logger.info(f"partitions assigned for {self.topic_name_pattern}")
         consumer.assign(partitions)
