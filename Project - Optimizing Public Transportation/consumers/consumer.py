@@ -49,9 +49,9 @@ class KafkaConsumer:
         # TODO: Create the Consumer, using the appropriate type.
         if is_avro is True:
             self.broker_properties["schema.registry.url"] = SCHEMA_REGISTRY_URL
-            self.consumer = AvroConsumer(**self.broker_properties)
+            self.consumer = AvroConsumer(self.broker_properties)
         else:
-            self.consumer = Consumer(**self.broker_properties)
+            self.consumer = Consumer(self.broker_properties)
 
         #
         # TODO: Configure the AvroConsumer and subscribe to the topics. Make
