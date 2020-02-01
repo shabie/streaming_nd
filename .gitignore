@@ -106,3 +106,4 @@ venv.bak/
 
 # ignore virtual env. folders
 venv/
+police-department-calls-for-service.json
