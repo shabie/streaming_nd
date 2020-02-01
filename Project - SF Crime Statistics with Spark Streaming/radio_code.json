@@ -1,0 +1,79 @@
+  
+[
+	{
+		"disposition_code":"ABA",
+		"description":"Abated"
+	},
+	{
+		"disposition_code":"ADM",
+		"description":"Admonished"
+	},
+	{
+		"disposition_code":"ADV",
+		"description":"Advised"
+	},
+	{
+		"disposition_code":"ARR",
+		"description":"Arrest"
+	},
+	{
+		"disposition_code":"CAN",
+		"description":"Cancel"
+	},
+	{
+		"disposition_code":"CSA",
+		"description":"CPSA assignment"
+	},
+	{
+		"disposition_code":"22",
+		"description":"Cancel"
+	},
+	{
+		"disposition_code":"CIT",
+		"description":"Cited"
+	},
+	{
+		"disposition_code":"CRM",
+		"description":"Criminal Activation"
+	},
+	{
+		"disposition_code":"GOA",
+		"description":"Gone on Arrival"
+	},
+	{
+		"disposition_code":"HAN",
+		"description":"Handled"
+	},
+	{
+		"disposition_code":"NCR",
+		"description":"Non-Criminal"
+	},
+	{
+		"disposition_code":"ND",
+		"description":"No Disposition"
+	},
+	{
+		"disposition_code":"NOM",
+		"description":"No Merit"
+	},
+	{
+		"disposition_code":"PAS",
+		"description":"Premises Appears Secure"
+	},
+	{
+		"disposition_code":"REP",
+		"description":"Report"
+	},
+	{
+		"disposition_code":"SFD",
+		"description":"SFFD Medical Staff Engaged"
+	},
+	{
+		"disposition_code":"UTL",
+		"description":"Unable to Locate"
+	},
+	{
+		"disposition_code":"VAS",
+		"description":"Vehicle Appears Secure"
+	}
+]
