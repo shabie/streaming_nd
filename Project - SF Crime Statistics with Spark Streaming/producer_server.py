@@ -6,20 +6,31 @@ import time
 class ProducerServer(KafkaProducer):
 
     def __init__(self, input_file, topic, **kwargs):
+        print(kwargs)
         super().__init__(**kwargs)
         self.input_file = input_file
         self.topic = topic
 
     #TODO we're generating a dummy data
     def generate_data(self):
-        with open(self.input_file) as f:
-            for line in f:
-                message = self.dict_to_binary(line)
-                # TODO send the correct data
-                self.send()
+        """
+        Read input JSON file from disk and produce individual serialized rows to Kafka
+        """
+        with open(self.input_file, "r") as f:
+
+            # read JSON data from input file
+            data = json.loads(f.read())
+
+            for idx, row in enumerate(data):
+
+                # serialize Python dict to string
+                msg = self.serialize_json(row)
+                self.send(self.topic, msg)
                 time.sleep(1)
 
-    # TODO fill this in to return the json dictionary to binary
-    def dict_to_binary(self, json_dict):
-        return 
-        
+    @staticmethod
+    def serialize_json(json_data):
+        """
+        Serialize Python dict to JSON-formatted, UTF-8 encoded string
+        """
+        return json.dumps(json_data).encode("utf-8")
